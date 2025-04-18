@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibonacci Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #result {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .sequence-box {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fibonacci Sequence Calculator</h1>
+        
+        <form id="fibForm" onsubmit="calculateFibonacci(event)">
+            <div class="form-group">
+                <input type="number" 
+                       id="number" 
+                       name="number" 
+                       placeholder="Enter a non-negative number" 
+                       required 
+                       min="0">
+            </div>
+            <button type="submit">Calculate</button>
+        </form>
+
+        <div class="loading" id="loading">
+            Calculating...
+        </div>
+
+        <div id="result">
+            <h2>Results:</h2>
+            <div class="sequence-box">
+                <h3>Detailed Sequence:</h3>
+                <div id="formattedSequence"></div>
+            </div>
+            <div class="sequence-box">
+                <h3>Complete Sequence:</h3>
+                <div id="completeSequence"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function calculateFibonacci(event) {
+            event.preventDefault();
+            
+            const number = document.getElementById('number').value;
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const formattedSequence = document.getElementById('formattedSequence');
+            const completeSequence = document.getElementById('completeSequence');
+            
+            // Show loading, hide results
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            
+            try {
+                const response = await fetch('/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `number=${number}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    formattedSequence.innerHTML = `<div class="error">${data.error}</div>`;
+                    completeSequence.innerHTML = '';
+                } else {
+                    formattedSequence.innerHTML = data.formatted_sequence.join('<br>');
+                    completeSequence.innerHTML = `[${data.sequence.join(', ')}]`;
+                }
+                
+                result.style.display = 'block';
+            } catch (error) {
+                formattedSequence.innerHTML = '<div class="error">An error occurred. Please try again.</div>';
+                completeSequence.innerHTML = '';
+                result.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 
