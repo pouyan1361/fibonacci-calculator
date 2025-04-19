@@ -38,6 +38,15 @@
             border-radius: 5px;
             font-size: 16px;
         }
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
         button {
             background-color: #4CAF50;
             color: white;
@@ -94,23 +103,7 @@
     <div class="calculator">
         <h1>Math Calculator</h1>
         <div class="form-group">
-            <select id="number" onchange="calculate()">
-                <option value="">Select a number</option>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="customNumber">Or enter your own number:</label>
+            <label for="customNumber">Enter a number:</label>
             <input type="number" 
                    id="customNumber" 
                    min="0" 
@@ -125,9 +118,7 @@
 
     <script>
         async function calculate() {
-            const dropdownNumber = document.getElementById('number').value;
-            const customNumber = document.getElementById('customNumber').value;
-            const number = customNumber || dropdownNumber;
+            const number = document.getElementById('customNumber').value;
             
             const loading = document.getElementById('loading');
             const result = document.getElementById('result');
